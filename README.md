@@ -4,7 +4,7 @@ A signal is a way to decouple between a subject(dispatcher) and the observers(li
 
 ![Signals diagram](./images/diagram.png)
 
-#Kotlin
+# Kotlin
 
 ```kotlin
 fun interface Chat{
@@ -28,7 +28,7 @@ class Foo2{
 }
 ```
 
-#Java 
+# Java 
 
 ```Java
 interface Chat{
