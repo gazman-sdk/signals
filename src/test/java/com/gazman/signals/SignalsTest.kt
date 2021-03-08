@@ -1,7 +1,6 @@
 package com.gazman.signals
 
 import com.gazman.signals.Signals.signal
-import com.gazman.signals.SignalsTest.EatSignal
 import org.junit.Assert
 import org.junit.Test
 import java.util.concurrent.Executors
@@ -13,8 +12,8 @@ class SignalsTest {
     fun testDispatch() {
         val foods = AtomicInteger()
         val eatSignal: Signal<EatSignal> = signal(EatSignal::class)
-        eatSignal.addListener(EatSignal { foods.incrementAndGet() })
-        eatSignal.addListener(EatSignal { foods.incrementAndGet() })
+        eatSignal.addListener { foods.incrementAndGet() }
+        eatSignal.addListener { foods.incrementAndGet() }
         eatSignal.dispatcher.onEat()
         Assert.assertEquals(2, foods.get().toLong())
     }
@@ -25,7 +24,7 @@ class SignalsTest {
         val foods = AtomicInteger()
         val eatSignal: Signal<EatSignal> = signal(EatSignal::class)
         for (i in 0..9) {
-            eatSignal.addListener(EatSignal { foods.incrementAndGet() })
+            eatSignal.addListener { foods.incrementAndGet() }
         }
         for (i in 0..9) {
             eatSignal.dispatcher.onEat()

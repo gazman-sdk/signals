@@ -9,8 +9,7 @@ import kotlin.reflect.KClass
 class SignalsHelper {
     private val removables = ArrayList<Runnable>()
     private var registerCallback: Runnable? = null
-    var isRegistered = false
-        private set
+    private var isRegistered = false
 
     fun setRegisterCallback(registerCallback: Runnable?) {
         this.registerCallback = registerCallback
@@ -47,10 +46,14 @@ class SignalsHelper {
         removables.add(Runnable { signal.removeListener(listener) })
     }
 
+    fun <T : Any> addListener(type: KClass<T>, listener: T) {
+        addListener(type.java, listener)
+    }
+
     /**
      * Will call to Signals.inject(signal).addListener(listener)
      */
-    fun <T : Any> addListener(type: KClass<T>, listener: T) {
+    fun <T : Any> addListener(type: Class<T>, listener: T) {
         val signal = Signals.signal(type)
         signal.addListener(listener)
         removables.add(Runnable { signal.removeListener(listener) })
@@ -71,10 +74,14 @@ class SignalsHelper {
         removables.add(Runnable { signal.removeListener(listener) })
     }
 
+    fun <T : Any> removeListener(type: KClass<T>, listener: T) {
+        removeListener(type.java, listener)
+    }
+
     /**
      * Will call to Signals.signal(signal).removeListener(listener)
      */
-    fun <T : Any> removeListener(type: KClass<T>, listener: T) {
+    fun <T : Any> removeListener(type: Class<T>, listener: T) {
         val signal = Signals.signal(type)
         signal.removeListener(listener)
     }

@@ -6,7 +6,8 @@ import java.lang.reflect.Method
  * Created by Ilya Gazman on 3/18/2016.
  */
 open class DefaultInvoker : Invoker {
-    protected var baseInvoker = BaseInvoker()
+    private var baseInvoker = BaseInvoker()
+
     override fun invoke(method: Method?, args: Array<Any?>?, listener: Any) {
         baseInvoker.method = method
         baseInvoker.args = args

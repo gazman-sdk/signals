@@ -1,17 +1,26 @@
 package com.gazman.signals
 
+import android.os.Handler
 import com.gazman.signals.invoker.DefaultInvoker
+import com.gazman.signals.invoker.ExecuteInvoker
+import com.gazman.signals.invoker.HandlerInvoker
 import com.gazman.signals.invoker.Invoker
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.util.*
-import kotlin.reflect.KClass
+import java.util.concurrent.Executor
 
 /**
  * Created by Ilya Gazman on 2/24/2015.
  */
-class Signal<T : Any> internal constructor(originalType: KClass<T>) {
+class Signal<T> internal constructor(@JvmField val originalType: Class<T>) {
+
+    companion object {
+        private val DEFAULT_INVOKER: Invoker = DefaultInvoker()
+    }
+
+    @JvmField
     val dispatcher: T
     private val synObject = Any()
     private val listeners = ArrayList<T>()
@@ -19,17 +28,35 @@ class Signal<T : Any> internal constructor(originalType: KClass<T>) {
     private var hasListeners = false
     private var invoker = DEFAULT_INVOKER
 
+
     init {
-        val invocationHandler = InvocationHandler { proxy: Any, method: Method, args: Array<Any?>? ->
+        val invocationHandler = InvocationHandler { _, method: Method, args: Array<Any?>? ->
             this@Signal.invoke(method, args)
             null
         }
         @Suppress("UNCHECKED_CAST")
-        dispatcher = Proxy.newProxyInstance(originalType.java.classLoader, arrayOf<Class<*>>(originalType.java), invocationHandler) as T
+        dispatcher = Proxy.newProxyInstance(originalType.classLoader, arrayOf<Class<*>>(originalType), invocationHandler) as T
     }
 
-    fun setInvoker(invoker: Invoker) {
-        this.invoker = invoker
+    /**
+     * Use this executor to execute all calls for listeners
+     */
+    fun setInvoker(executor: Executor) {
+        this.invoker = ExecuteInvoker(executor)
+    }
+
+    /**
+     * Use this handler to execute all calls for listeners
+     */
+    fun setInvoker(handler: Handler) {
+        this.invoker = HandlerInvoker(handler)
+    }
+
+    /**
+     * Remove the invoker
+     */
+    fun clearInvoker() {
+        invoker = DEFAULT_INVOKER
     }
 
     /**
@@ -87,7 +114,7 @@ class Signal<T : Any> internal constructor(originalType: KClass<T>) {
         synchronized(synObject) { hasListeners = listeners.size + oneTimeListeners.size > 0 }
     }
 
-    operator fun invoke(method: Method?, args: Array<Any?>?) {
+    private operator fun invoke(method: Method?, args: Array<Any?>?) {
         var listener: T?
         if (listeners.size > 0) {
             var i = 0
@@ -96,7 +123,7 @@ class Signal<T : Any> internal constructor(originalType: KClass<T>) {
                     listener = if (i < listeners.size) {
                         listeners[i]
                     } else {
-                        null;
+                        null
                     }
                 }
                 if (listener == null) {
@@ -117,9 +144,5 @@ class Signal<T : Any> internal constructor(originalType: KClass<T>) {
 
     fun hasListeners(): Boolean {
         return hasListeners
-    }
-
-    companion object {
-        private val DEFAULT_INVOKER: Invoker = DefaultInvoker()
     }
 }

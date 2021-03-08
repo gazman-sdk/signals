@@ -12,9 +12,10 @@ class BaseInvoker : Runnable {
     var args: Array<Any?>?
     var listener: Any? = null
 
-    constructor(){
+    constructor() {
         args = emptyArray()
     }
+
     constructor(method: Method?, args: Array<Any?>?, listener: Any) {
         this.method = method
         this.args = args
@@ -26,10 +27,9 @@ class BaseInvoker : Runnable {
             if (!method!!.isAccessible) {
                 method!!.isAccessible = true
             }
-            if(args == null) {
+            if (args == null) {
                 method!!.invoke(listener)
-            }
-            else{
+            } else {
                 method!!.invoke(listener, *args as Array<Any?>)
             }
         } catch (e: Throwable) {
