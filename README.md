@@ -18,7 +18,7 @@ Step 1. Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.gazman-sdk:signals:Tag'
+	    implementation 'com.github.gazman-sdk:signals:v1.3'
 	}
 
 # Kotlin
