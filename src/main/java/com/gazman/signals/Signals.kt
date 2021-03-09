@@ -52,7 +52,7 @@ object Signals {
     @JvmStatic
     fun <T> log(tClass: Class<T>, tag: String?): T {
         @Suppress("UNCHECKED_CAST")
-        return Proxy.newProxyInstance(tClass.classLoader, arrayOf<Class<*>>(tClass)) { proxy: Any, method: Method, args: Array<Any>? ->
+        return Proxy.newProxyInstance(tClass.classLoader, arrayOf<Class<*>>(tClass)) { _, method: Method, args: Array<Any>? ->
             val stringBuilder = StringBuilder()
             if (args != null) {
                 for (arg in args) {

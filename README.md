@@ -1,5 +1,7 @@
 # signals
 
+[![](https://jitpack.io/v/gazman-sdk/signals.svg)](https://jitpack.io/#gazman-sdk/signals)
+
 A signal is a way to decouple between a subject(dispatcher) and the observers(listeners) in distributed event handling systems.
 
 ![Signals diagram](./images/diagram.png)
