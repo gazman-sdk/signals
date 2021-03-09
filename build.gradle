@@ -4,6 +4,9 @@ plugins {
     id 'maven-publish'
 }
 
+group = 'com.gazman.Signals'
+version = '1.0'
+
 afterEvaluate {
     publishing {
         publications {
@@ -11,12 +14,6 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.gazman.Signals'
                 artifactId = 'final'
-                version = '1.0'
-            }
-            debug(MavenPublication) {
-                from components.debug
-                groupId = 'com.gazman.Signals'
-                artifactId = 'final-debug'
                 version = '1.0'
             }
         }
