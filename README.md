@@ -1,4 +1,4 @@
-# signals
+# Signals
 
 [![](https://jitpack.io/v/gazman-sdk/signals.svg)](https://jitpack.io/#gazman-sdk/signals)
 
