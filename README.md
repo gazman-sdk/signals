@@ -2,7 +2,7 @@
 
 [![](https://jitpack.io/v/gazman-sdk/signals.svg)](https://jitpack.io/#gazman-sdk/signals)
 
-A signal is a way to decouple between a subject(dispatcher) and the observers(listeners) in distributed event handling systems.
+A Signal is a way to decouple between a subject(dispatcher) and the observers(listeners) in distributed event handling systems.
 
 ![Signals diagram](./images/diagram.png)
 
@@ -21,7 +21,7 @@ Step 2. Add the dependency
 	    implementation 'com.github.gazman-sdk:signals:v1.3'
 	}
 
-# Kotlin
+# Kotlin example
 
 ```kotlin
 fun interface Chat{
@@ -45,7 +45,7 @@ class Foo2{
 }
 ```
 
-# Java 
+# Java example
 
 ```Java
 interface Chat{
@@ -69,37 +69,36 @@ class Foo2{
 }
 ```
 
-The signal is automatically created from an interface. It allows to add listeners and dispatch the signal.
+The Signal is automatically created from the `Chat` interface. It allows `Foo` to register for it and `Foo2` to dispatch new messages without interaction.
 
 # Signal API
 
 ## Register/Unregister listeners
 
- - addListener(listener) - registers a listeners for this signal  
- - addListenerOnce(listener) - registers a listeners for this signal and unregister it after the first dispatch
- - removeListener(listener) - removes a listener that was registered using one of the methods above
+ - `addListener(listener)` - registers a listeners for this signal  
+ - `addListenerOnce(listener)` - registers a listeners for this signal and unregister it after the first dispatch
+ - `removeListener(listener)` - removes a listener that was registered using one of the methods above
 
 ## Dispatch events
 
- - `dispatcher` - a property from the interface-type used to create this Signal. 
-   When it being invoked it is propagating to all the listeners.
- - setInvoker(executor/handler) - by default all the listeners will be executed synchronously over the dispatcher thread
-   this can be changed by using an explicit executor/handler to execute all the calls for listeners
+ - `dispatcher` - property from the interface-type used to create this Signal. 
+   When it is invoked, it is propagating to all the listeners.
+ - `setInvoker(executor/handler)` - by default, all the listeners, will be executed synchronously over the dispatcher thread. You can change this behavior by using an explicit executor/handler to execute all the calls for listeners
 
 ## SignalsHelper
 
-A helps class to unregister all the signals at once. 
+A helper class to unregister all the signals at once. 
 
- - addListener(class, listener) 
- - addListenerOnce(class, listener) 
- - removeListener(class, listener)
- - removeAll() - Removes all the listeners registered via this SignalsHelper
+ - `addListener(class, listener)` 
+ - `addListenerOnce(class, listener)` 
+ - `removeListener(class, listener)`
+ - `removeAll()` - Removes all the listeners registered via this SignalsHelper
  
 ## G
 
-G is a super light utility class to simplify the work with Signals
+`G` is a super light utility class to simplify the work with Signals.
 
- - G.app - app context. It is automatically obtained via a ContentProvider during Application creation
- - G.main - Main handler
- - G.IO - A single threaded executor
- - G.CE - A multithreaded cached executor
+ - `G.app` - app context. It is **automatically** obtained via a `ContentProvider` during the Application creation
+ - `G.main` - Main handler
+ - `G.IO` - A single threaded executor
+ - `G.CE` - A multithreaded cached executor
