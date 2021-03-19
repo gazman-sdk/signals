@@ -1,5 +1,5 @@
 # Signals
-
+[![codebeat badge](https://codebeat.co/badges/1e9e1f4e-de1e-45d2-9aaa-70ed6295cb55)](https://codebeat.co/projects/github-com-gazman-sdk-signals-master)
 [![](https://jitpack.io/v/gazman-sdk/signals.svg)](https://jitpack.io/#gazman-sdk/signals)
 
 A Signal is a way to decouple between a subject(dispatcher) and the observers(listeners) in distributed event handling systems.
