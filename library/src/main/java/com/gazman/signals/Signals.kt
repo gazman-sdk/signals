@@ -24,7 +24,7 @@ object Signals {
      * @return Signal from given type
      */
     @JvmStatic
-    fun <T : Any> signal(type: Class<T>): Signal<T> {
+    fun <T> signal(type: Class<T>): Signal<T> {
         @Suppress("UNCHECKED_CAST")
         return map.getOrPut(type, { localSignal(type) }) as Signal<T>
     }

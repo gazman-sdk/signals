@@ -43,7 +43,7 @@ class SignalsHelper {
      */
     fun <T : Any> addListener(signal: Signal<T>, listener: T) {
         signal.addListener(listener)
-        removables.add(Runnable { signal.removeListener(listener) })
+        removables.add { signal.removeListener(listener) }
     }
 
     fun <T : Any> addListener(type: KClass<T>, listener: T) {
@@ -53,10 +53,10 @@ class SignalsHelper {
     /**
      * Will call to Signals.inject(signal).addListener(listener)
      */
-    fun <T : Any> addListener(type: Class<T>, listener: T) {
+    fun <T> addListener(type: Class<T>, listener: T) {
         val signal = Signals.signal(type)
         signal.addListener(listener)
-        removables.add(Runnable { signal.removeListener(listener) })
+        removables.add { signal.removeListener(listener) }
     }
 
     /**
@@ -69,9 +69,9 @@ class SignalsHelper {
     /**
      * Will call to [signal.addListenerOnce(listener)][Signal.addListenerOnce]
      */
-    fun <T : Any> addListenerOnce(signal: Signal<T>, listener: T) {
+    fun <T> addListenerOnce(signal: Signal<T>, listener: T) {
         signal.addListenerOnce(listener)
-        removables.add(Runnable { signal.removeListener(listener) })
+        removables.add { signal.removeListener(listener) }
     }
 
     fun <T : Any> removeListener(type: KClass<T>, listener: T) {
@@ -81,7 +81,7 @@ class SignalsHelper {
     /**
      * Will call to Signals.signal(signal).removeListener(listener)
      */
-    fun <T : Any> removeListener(type: Class<T>, listener: T) {
+    fun <T> removeListener(type: Class<T>, listener: T) {
         val signal = Signals.signal(type)
         signal.removeListener(listener)
     }
@@ -89,7 +89,7 @@ class SignalsHelper {
     /**
      * Will call to signal.removeListener(listener)
      */
-    fun <T : Any> removeListener(signal: Signal<T>, listener: T) {
+    fun <T> removeListener(signal: Signal<T>, listener: T) {
         signal.removeListener(listener)
     }
 
