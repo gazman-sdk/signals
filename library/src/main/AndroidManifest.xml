@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.gazman.signals"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.gazman.signals">
 
     <application>
         <provider
+            android:name=".context.ContextProvider"
             android:authorities="com.gazman.signals.context.ContextProvider"
-            android:exported="false"
-            android:name=".context.ContextProvider" />
+            android:exported="false" />
     </application>
 </manifest>

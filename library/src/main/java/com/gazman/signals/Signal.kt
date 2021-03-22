@@ -22,10 +22,8 @@ class Signal<T> internal constructor(@JvmField val originalType: Class<T>) {
 
     @JvmField
     val dispatcher: T
-    private val synObject = Any()
-    private val listeners = ArrayList<T>()
-    private val oneTimeListeners = LinkedList<T>()
-    private var hasListeners = false
+    private val listeners = ListenersList<T>()
+    private val oneTimeListeners = ListenersList<T>()
     private var invoker = DEFAULT_INVOKER
 
 
@@ -65,7 +63,9 @@ class Signal<T> internal constructor(@JvmField val originalType: Class<T>) {
      * @param listener listener to register
      */
     fun addListener(listener: T) {
-        applyListener(listeners, listener)
+        synchronized(this) {
+            listeners.add(listener)
+        }
     }
 
     /**
@@ -77,22 +77,8 @@ class Signal<T> internal constructor(@JvmField val originalType: Class<T>) {
      * @param listener listener to register
      */
     fun addListenerOnce(listener: T) {
-        applyListener(oneTimeListeners, listener)
-    }
-
-    private fun <TYPE> applyListener(list: MutableList<TYPE>, listener: TYPE) {
-        validateListener(listener)
-        synchronized(synObject) {
-            if (!list.contains(listener)) {
-                hasListeners = true
-                list.add(listener)
-            }
-        }
-    }
-
-    private fun validateListener(listener: Any?) {
-        if (listener == null) {
-            throw NullPointerException("Listener can't be null")
+        synchronized(this) {
+            oneTimeListeners.add(listener)
         }
     }
 
@@ -102,47 +88,28 @@ class Signal<T> internal constructor(@JvmField val originalType: Class<T>) {
      * @param listener listener to unregister
      */
     fun removeListener(listener: T) {
-        validateListener(listener)
-        synchronized(synObject) {
+        synchronized(this) {
             listeners.remove(listener)
             oneTimeListeners.remove(listener)
-            updateHasListeners()
         }
-    }
-
-    private fun updateHasListeners() {
-        synchronized(synObject) { hasListeners = listeners.size + oneTimeListeners.size > 0 }
     }
 
     private operator fun invoke(method: Method?, args: Array<Any?>?) {
-        var listener: T?
-        if (listeners.size > 0) {
-            var i = 0
-            while (true) {
-                synchronized(synObject) {
-                    listener = if (i < listeners.size) {
-                        listeners[i]
-                    } else {
-                        null
-                    }
-                }
-                if (listener == null) {
-                    break
-                }
-                invoker.invoke(method, args, listener!!)
-                i++
+        for (listener in listeners) {
+            if (listener != null) {
+                invoker.invoke(method, args, listener)
             }
         }
-        while (oneTimeListeners.size > 0) {
-            synchronized(synObject) {
-                listener = oneTimeListeners.removeFirst()
+        for (listener in oneTimeListeners) {
+            if (listener != null) {
+                invoker.invoke(method, args, listener)
             }
-            invoker.invoke(method, args, listener!!)
         }
-        updateHasListeners()
+
+        oneTimeListeners.clear()
     }
 
     fun hasListeners(): Boolean {
-        return hasListeners
+        return listeners.isNotEmpty() || oneTimeListeners.isNotEmpty()
     }
 }
