@@ -8,10 +8,16 @@ internal class ListenersList<T> : Iterable<T?> {
     private var tail: Node<T>? = null
     private var map = IdentityHashMap<T, Node<T>>()
 
+    /**
+     * is number of listeners > 0
+     */
     fun isNotEmpty(): Boolean {
         return map.isNotEmpty()
     }
 
+    /**
+     * Add a listener the tail
+     */
     fun add(listener: T) {
         synchronized(this) {
             if (map.containsKey(listener)) {
@@ -31,11 +37,23 @@ internal class ListenersList<T> : Iterable<T?> {
         }
     }
 
+    /**
+     * Remove a listener it exists or ignore otherwise
+     */
     fun remove(listener: T) {
         synchronized(this) {
             val node = map[listener]
-            node?.previous?.next = node?.next
-            node?.next?.previous = node?.previous
+            if (node == head || node == tail) {
+                if (node == head) {
+                    head = head?.next
+                }
+                if (node == tail) { // No else here, as head can be equal to tail
+                    tail = tail?.previous
+                }
+            } else {
+                node?.previous?.next = node?.next
+                node?.next?.previous = node?.previous
+            }
         }
     }
 
@@ -57,6 +75,9 @@ internal class ListenersList<T> : Iterable<T?> {
         }
     }
 
+    /**
+     * Remove all the listeners
+     */
     fun clear() {
         synchronized(this) {
             head = null

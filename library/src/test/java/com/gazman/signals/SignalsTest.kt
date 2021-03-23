@@ -1,6 +1,6 @@
 package com.gazman.signals
 
-import com.gazman.signals.Signals.signal
+import com.gazman.signals.Signals.localSignal
 import org.junit.Assert
 import org.junit.Test
 import java.util.concurrent.Executors
@@ -17,7 +17,7 @@ class SignalsTest {
     @Test
     fun addListenerAndDispatch() {
         val counter = AtomicInteger()
-        val eatSignal: Signal<EatSignal> = signal(EatSignal::class)
+        val eatSignal: Signal<EatSignal> = localSignal(EatSignal::class)
         eatSignal.addListener { counter.incrementAndGet() }
         eatSignal.addListener { counter.incrementAndGet() }
 
@@ -27,19 +27,34 @@ class SignalsTest {
 
     @Test
     fun removeListener() {
+        for (i in 0..9) {
+            removeListener(i)
+        }
+    }
+
+    private fun removeListener(index: Int) {
         val counter = AtomicInteger()
-        val eatSignal: Signal<EatSignal> = signal(EatSignal::class)
-        eatSignal.addListener { counter.incrementAndGet() }
-        eatSignal.addListener { counter.incrementAndGet() }
+        val eatSignal: Signal<EatSignal> = localSignal(EatSignal::class)
+        val listeners = ArrayList<EatSignal>()
+
+        for (i in 0..9) {
+            listeners.add { counter.incrementAndGet() }
+        }
+        for (i in 0..9) {
+            eatSignal.addListener(listeners[i])
+        }
+
+        eatSignal.removeListener(listeners[index])
 
         eatSignal.dispatcher.onEat()
-        Assert.assertEquals(2, counter.get())
+
+        Assert.assertEquals(9, counter.get())
     }
 
     @Test
     fun addListenerWhileDispatching() {
         val counter = AtomicInteger()
-        val eatSignal: Signal<EatSignal> = signal(EatSignal::class)
+        val eatSignal: Signal<EatSignal> = localSignal(EatSignal::class)
         eatSignal.addListener {
             counter.incrementAndGet()
             eatSignal.addListener { counter.incrementAndGet() }
@@ -58,7 +73,7 @@ class SignalsTest {
 
     private fun removeListenerWhileDispatching(index: Int) {
         val counter = AtomicInteger()
-        val eatSignal: Signal<EatSignal> = signal(EatSignal::class)
+        val eatSignal: Signal<EatSignal> = localSignal(EatSignal::class)
 
         val listeners = ArrayList<EatSignal>()
         for (i in 0..9) {
@@ -84,7 +99,7 @@ class SignalsTest {
     fun dispatchAsync() {
         val executorService = Executors.newFixedThreadPool(10)
         val counter = AtomicInteger()
-        val eatSignal: Signal<EatSignal> = signal(EatSignal::class)
+        val eatSignal: Signal<EatSignal> = localSignal(EatSignal::class)
         val random = Random(123)
 
         for (i in 0..9) {
