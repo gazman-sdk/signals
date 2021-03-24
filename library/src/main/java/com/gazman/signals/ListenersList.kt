@@ -42,7 +42,7 @@ internal class ListenersList<T> : Iterable<T?> {
      */
     fun remove(listener: T) {
         synchronized(this) {
-            val node = map[listener]
+            val node = map.remove(listener)
             if (node == head || node == tail) {
                 if (node == head) {
                     head = head?.next
