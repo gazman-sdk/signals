@@ -61,7 +61,14 @@ internal class ListenersList<T> : Iterable<T?> {
         return object : Iterator<T?> {
             var node: Node<T>? = none
 
-            override fun hasNext() = node != null && node != tail
+            override fun hasNext() =
+                    // in case during the n-2 item iteration the n-1 item was removed, the iteration should stop
+                    // in such case the node will be equal to the tail
+                    //
+                    // in case during the n-1 iteration the n-1 item added new items the iteration should not stop
+                    // in such case the node will be null
+                    node != null && node != tail &&
+                            head != null // handle the clear case
 
             override fun next(): T? {
                 node = if (node == none) {
