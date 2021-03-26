@@ -42,17 +42,21 @@ internal class ListenersList<T> : Iterable<T?> {
      */
     fun remove(listener: T) {
         synchronized(this) {
-            val node = map.remove(listener)
+            val node = map.remove(listener) ?: return
+            node.removed = true
+
             if (node == head || node == tail) {
                 if (node == head) {
                     head = head?.next
+                    head?.previous = null
                 }
                 if (node == tail) { // No else here, as head can be equal to tail
                     tail = tail?.previous
+                    tail?.next = null
                 }
             } else {
-                node?.previous?.next = node?.next
-                node?.next?.previous = node?.previous
+                node.previous?.next = node.next
+                node.next?.previous = node.previous
             }
         }
     }
@@ -62,19 +66,30 @@ internal class ListenersList<T> : Iterable<T?> {
             var node: Node<T>? = none
 
             override fun hasNext() =
-                    // in case during the n-2 item iteration the n-1 item was removed, the iteration should stop
-                    // in such case the node will be equal to the tail
-                    //
-                    // in case during the n-1 iteration the n-1 item added new items the iteration should not stop
+            // in case during the n-2 item iteration the n-1 item was removed, the iteration should stop
+            // in such case the node will be equal to the tail
+            //
+            // in case during the n-1 iteration the n-1 item added new items the iteration should not stop
                     // in such case the node will be null
                     node != null && node != tail &&
                             head != null // handle the clear case
 
             override fun next(): T? {
-                node = if (node == none) {
-                    this@ListenersList.head
+                if (node == none) {
+                    node = this@ListenersList.head
                 } else {
-                    node?.next
+                    if (node?.removed == true) {
+                        while (node != null) {
+                            if (node?.previous?.removed == false) {
+                                node = node?.previous?.next
+                                return node?.value
+                            }
+                            node = node?.previous
+                        }
+                        node = this@ListenersList.head
+                    } else {
+                        node = node?.next
+                    }
                 }
                 return node?.value
             }

@@ -61,6 +61,19 @@ class ListenersListTest {
     }
 
     @Test
+    fun removeRangeWhileIterating() {
+        testIteration("a", "ac") {
+            list.remove("a")
+            list.remove("b")
+        }
+
+        testIteration("b", "ab") {
+            list.remove("b")
+            list.remove("c")
+        }
+    }
+
+    @Test
     fun addWhileIterating() {
         testIteration("a", "abcd") { list.add("d") }
         testIteration("b", "abcd") { list.add("d") }
