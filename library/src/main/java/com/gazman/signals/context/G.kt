@@ -20,12 +20,6 @@ object G {
     val main = Handler(Looper.getMainLooper())
 
     /**
-     * Single thread executor
-     */
-    @JvmField
-    val IO: ExecutorService = Executors.newSingleThreadExecutor()
-
-    /**
      * Cached Thread Pool
      */
     @JvmField

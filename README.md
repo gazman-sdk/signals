@@ -100,5 +100,4 @@ A helper class to unregister all the signals at once.
 
  - `G.app` - app context. It is **automatically** obtained via a `ContentProvider` during the Application creation
  - `G.main` - Main handler
- - `G.IO` - A single threaded executor
  - `G.CE` - A multithreaded cached executor
