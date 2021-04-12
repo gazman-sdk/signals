@@ -101,3 +101,8 @@ A helper class to unregister all the signals at once.
  - `G.app` - app context. It is **automatically** obtained via a `ContentProvider` during the Application creation
  - `G.main` - Main handler
  - `G.CE` - A multithreaded cached executor
+
+# Behavior 
+
+ - Signals support modification during iteration. You can add and remove listeners during the dispatch phase, and it will take effect immediately. See the [ListenersList](https://github.com/gazman-sdk/signals/blob/master/library/src/main/java/com/gazman/signals/ListenersList.kt) implementation for details, as well as [ListenersListTest](https://github.com/gazman-sdk/signals/blob/master/library/src/test/java/com/gazman/signals/ListenersListTest.kt)
+ - Signals is thread-safe, you can add/remove/clear and dispatch in a multithreaded environment
