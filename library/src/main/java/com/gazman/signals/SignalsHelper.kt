@@ -41,7 +41,7 @@ class SignalsHelper {
     /**
      * Will call to signal.addListener(listener)
      */
-    fun <T : Any> addListener(signal: Signal<T>, listener: T) {
+    fun <T> addListener(signal: Signal<T>, listener: T) {
         signal.addListener(listener)
         removables.add { signal.removeListener(listener) }
     }
